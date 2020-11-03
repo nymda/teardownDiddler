@@ -1,6 +1,6 @@
 # teardownDiddler
 
-   -teleport to position
-   -jetpack fly
-   -godmode 
-   -remove world boundaries
+-teleport to position__
+-jetpack fly__
+-godmode__
+-remove world boundaries__
