@@ -41,9 +41,9 @@
             this.updateCurrentPositions = new System.Windows.Forms.Timer(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cbJetpack = new System.Windows.Forms.CheckBox();
-            this.cbDeleteBoundaries = new System.Windows.Forms.CheckBox();
             this.setColour = new System.Windows.Forms.ColorDialog();
             this.cbStronk = new System.Windows.Forms.CheckBox();
+            this.btnRemoveBoundaries = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -67,7 +67,7 @@
             // 
             // btnLoadPos
             // 
-            this.btnLoadPos.Location = new System.Drawing.Point(243, 70);
+            this.btnLoadPos.Location = new System.Drawing.Point(243, 45);
             this.btnLoadPos.Name = "btnLoadPos";
             this.btnLoadPos.Size = new System.Drawing.Size(97, 23);
             this.btnLoadPos.TabIndex = 7;
@@ -152,9 +152,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnRemoveBoundaries);
             this.groupBox2.Controls.Add(this.cbStronk);
             this.groupBox2.Controls.Add(this.cbJetpack);
-            this.groupBox2.Controls.Add(this.cbDeleteBoundaries);
             this.groupBox2.Location = new System.Drawing.Point(12, 138);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(346, 46);
@@ -172,17 +172,6 @@
             this.cbJetpack.Text = "Jetpack";
             this.cbJetpack.UseVisualStyleBackColor = true;
             // 
-            // cbDeleteBoundaries
-            // 
-            this.cbDeleteBoundaries.AutoSize = true;
-            this.cbDeleteBoundaries.Location = new System.Drawing.Point(8, 19);
-            this.cbDeleteBoundaries.Name = "cbDeleteBoundaries";
-            this.cbDeleteBoundaries.Size = new System.Drawing.Size(116, 17);
-            this.cbDeleteBoundaries.TabIndex = 0;
-            this.cbDeleteBoundaries.Text = "Disable boundaries";
-            this.cbDeleteBoundaries.UseVisualStyleBackColor = true;
-            this.cbDeleteBoundaries.CheckedChanged += new System.EventHandler(this.cbDeleteBoundaries_CheckedChanged);
-            // 
             // cbStronk
             // 
             this.cbStronk.AutoSize = true;
@@ -192,6 +181,16 @@
             this.cbStronk.TabIndex = 2;
             this.cbStronk.Text = "Stronk";
             this.cbStronk.UseVisualStyleBackColor = true;
+            // 
+            // btnRemoveBoundaries
+            // 
+            this.btnRemoveBoundaries.Location = new System.Drawing.Point(6, 15);
+            this.btnRemoveBoundaries.Name = "btnRemoveBoundaries";
+            this.btnRemoveBoundaries.Size = new System.Drawing.Size(110, 23);
+            this.btnRemoveBoundaries.TabIndex = 3;
+            this.btnRemoveBoundaries.Text = "Remove boundaries";
+            this.btnRemoveBoundaries.UseVisualStyleBackColor = true;
+            this.btnRemoveBoundaries.Click += new System.EventHandler(this.btnRemoveBoundaries_Click);
             // 
             // Form1
             // 
@@ -225,10 +224,10 @@
         private System.Windows.Forms.Label cPosX;
         private System.Windows.Forms.Timer updateCurrentPositions;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox cbDeleteBoundaries;
         private System.Windows.Forms.ColorDialog setColour;
         private System.Windows.Forms.CheckBox cbJetpack;
         private System.Windows.Forms.CheckBox cbStronk;
+        private System.Windows.Forms.Button btnRemoveBoundaries;
     }
 }
 

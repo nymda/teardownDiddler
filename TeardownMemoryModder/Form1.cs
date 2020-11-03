@@ -21,6 +21,25 @@ namespace TeardownMemoryModder
             InitializeComponent();
         }
 
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+
+        private string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            IntPtr handle = GetForegroundWindow();
+
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
@@ -43,7 +62,9 @@ namespace TeardownMemoryModder
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
-        public List<float> storedPosition = new List<float> { };
+        public List<float> storedPosition = new List<float> { 0f, 0f, 0f };
+        public byte[] campos = new byte[84];
+        public byte[] camang = new byte[84];
 
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         private const UInt32 SWP_NOSIZE = 0x0001;
@@ -111,6 +132,11 @@ namespace TeardownMemoryModder
         public float setVelo = 3;
         private void updateCurrentPositions_Tick(object sender, EventArgs e)
         {
+            //---------
+            int unusedRef = 0;
+
+            //---------
+
             Byte[] buffer = new byte[12];
             int read = 0;
             ReadProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref read);
@@ -132,11 +158,11 @@ namespace TeardownMemoryModder
             short keyStateSpace = GetAsyncKeyState(0x20);
             bool isSpacePressed = ((keyStateSpace >> 15) & 0x0001) == 0x0001;
 
-            if (isIPressed)
+            if (isIPressed && GetActiveWindowTitle() == "Teardown")
             {
                 btnSavePos_Click(null, null);
             }
-            if (isKPressed)
+            if (isKPressed && GetActiveWindowTitle() == "Teardown")
             {
                 btnLoadPos_Click(null, null);
             }
@@ -189,6 +215,9 @@ namespace TeardownMemoryModder
 
         private void btnSavePos_Click(object sender, EventArgs e)
         {
+            int unusedRef = 0;
+            ReadProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
+            ReadProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
             storedPosition = new List<float> { x, y, z };
             sPosX.Text = "Saved X: " + x.ToString("0.00");
             sPosY.Text = "Saved Y: " + y.ToString("0.00");
@@ -202,22 +231,12 @@ namespace TeardownMemoryModder
             lBuffer.AddRange(BitConverter.GetBytes(storedPosition[1]));
             lBuffer.AddRange(BitConverter.GetBytes(storedPosition[2]));
             byte[] buffer = lBuffer.ToArray();
-            int wrote = 0;
-            WriteProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref wrote);
-        }
-
-        private void cbDeleteBoundaries_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbDeleteBoundaries.Checked)
+            int unusedRef = 0;
+            WriteProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref unusedRef);
+            if(campos != null)
             {
-                byte[] noWalls = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-                int wrote = 0;
-                WriteProcessMemory(processHandle, sceneInstance + 0x530, noWalls, noWalls.Length, ref wrote);
-            }
-            else
-            {
-                int wrote = 0;
-                WriteProcessMemory(processHandle, sceneInstance + 0x530, origionalWallCode, origionalWallCode.Length, ref wrote);
+                WriteProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
+                WriteProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
             }
         }
 
@@ -231,6 +250,13 @@ namespace TeardownMemoryModder
                 int read = 0;
                 ReadProcessMemory(processHandle, sceneInstance + 0xE8, buffer, buffer.Length, ref read);
             }
+        }
+
+        private void btnRemoveBoundaries_Click(object sender, EventArgs e)
+        {
+            byte[] noWalls = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            int wrote = 0;
+            WriteProcessMemory(processHandle, sceneInstance + 0x530, noWalls, noWalls.Length, ref wrote);
         }
     }
 }
