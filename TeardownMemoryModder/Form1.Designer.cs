@@ -40,9 +40,10 @@
             this.cPosX = new System.Windows.Forms.Label();
             this.updateCurrentPositions = new System.Windows.Forms.Timer(this.components);
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cbJetpack = new System.Windows.Forms.CheckBox();
             this.cbDeleteBoundaries = new System.Windows.Forms.CheckBox();
             this.setColour = new System.Windows.Forms.ColorDialog();
-            this.cbJetpack = new System.Windows.Forms.CheckBox();
+            this.cbStronk = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -151,6 +152,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.cbStronk);
             this.groupBox2.Controls.Add(this.cbJetpack);
             this.groupBox2.Controls.Add(this.cbDeleteBoundaries);
             this.groupBox2.Location = new System.Drawing.Point(12, 138);
@@ -159,6 +161,16 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc";
+            // 
+            // cbJetpack
+            // 
+            this.cbJetpack.AutoSize = true;
+            this.cbJetpack.Location = new System.Drawing.Point(130, 19);
+            this.cbJetpack.Name = "cbJetpack";
+            this.cbJetpack.Size = new System.Drawing.Size(64, 17);
+            this.cbJetpack.TabIndex = 1;
+            this.cbJetpack.Text = "Jetpack";
+            this.cbJetpack.UseVisualStyleBackColor = true;
             // 
             // cbDeleteBoundaries
             // 
@@ -171,15 +183,15 @@
             this.cbDeleteBoundaries.UseVisualStyleBackColor = true;
             this.cbDeleteBoundaries.CheckedChanged += new System.EventHandler(this.cbDeleteBoundaries_CheckedChanged);
             // 
-            // cbJetpack
+            // cbStronk
             // 
-            this.cbJetpack.AutoSize = true;
-            this.cbJetpack.Location = new System.Drawing.Point(130, 19);
-            this.cbJetpack.Name = "cbJetpack";
-            this.cbJetpack.Size = new System.Drawing.Size(64, 17);
-            this.cbJetpack.TabIndex = 1;
-            this.cbJetpack.Text = "Jetpack";
-            this.cbJetpack.UseVisualStyleBackColor = true;
+            this.cbStronk.AutoSize = true;
+            this.cbStronk.Location = new System.Drawing.Point(200, 19);
+            this.cbStronk.Name = "cbStronk";
+            this.cbStronk.Size = new System.Drawing.Size(57, 17);
+            this.cbStronk.TabIndex = 2;
+            this.cbStronk.Text = "Stronk";
+            this.cbStronk.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -216,6 +228,7 @@
         private System.Windows.Forms.CheckBox cbDeleteBoundaries;
         private System.Windows.Forms.ColorDialog setColour;
         private System.Windows.Forms.CheckBox cbJetpack;
+        private System.Windows.Forms.CheckBox cbStronk;
     }
 }
 

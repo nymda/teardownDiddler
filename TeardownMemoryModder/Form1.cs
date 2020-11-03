@@ -161,6 +161,13 @@ namespace TeardownMemoryModder
             {
                 setVelo = 3;
             }
+
+            if (cbStronk.Checked)
+            {
+                int wrote = 0;
+                byte[] stronk = BitConverter.GetBytes(10f);
+                WriteProcessMemory(processHandle, playerInstance + 0x015C, stronk, stronk.Length, ref wrote);
+            }
         }
 
         public IntPtr GetModuleBaseAddress(string processName, string moduleName)
