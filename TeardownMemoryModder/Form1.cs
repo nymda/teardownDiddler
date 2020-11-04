@@ -61,7 +61,7 @@ namespace TeardownMemoryModder
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
+        public int unusedRef = 0;
         public List<float> storedPosition = new List<float> { 0f, 0f, 0f };
         public byte[] campos = new byte[84];
         public byte[] camang = new byte[84];
@@ -93,7 +93,7 @@ namespace TeardownMemoryModder
 
             Process[] teardowns = Process.GetProcessesByName("teardown");
 
-            if(teardowns.Length > 0)
+            if (teardowns.Length > 0)
             {
                 process = teardowns[0];
                 handle = OpenProcess(PROCESS_ALL_ACCESS, false, process.Id);
@@ -117,6 +117,8 @@ namespace TeardownMemoryModder
                 ReadProcessMemory(processHandle, scenePtr, buffer, buffer.Length, ref bytesRead);
                 sceneInstance = BitConverter.ToInt64(buffer, 0);
 
+                Console.WriteLine(playerPtr);
+
                 int read_vcount = 0;
                 ReadProcessMemory(processHandle, sceneInstance + 0x530, origionalWallCode, origionalWallCode.Length, ref read_vcount);
 
@@ -126,29 +128,24 @@ namespace TeardownMemoryModder
             {
                 this.Text = "Teardown diddler [TD NOT RUNNING]";
             }
-            
+
         }
 
-        public float setVelo = 3;
         private void updateCurrentPositions_Tick(object sender, EventArgs e)
         {
             //---------
             int unusedRef = 0;
-
+            Byte[] buffer = new byte[12];
             //---------
 
-            Byte[] buffer = new byte[12];
-            int read = 0;
-            ReadProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref read);
-
+            ///read current position from memory
+            ReadProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref unusedRef);
             x = BitConverter.ToSingle(buffer, 0);
             y = BitConverter.ToSingle(buffer, 4);
             z = BitConverter.ToSingle(buffer, 8);
+            curCords.Text = String.Format("Current: {0} | {1} | {2}", numProc(x), numProc(y), numProc(z));
 
-            cPosX.Text = "Current X: " + x.ToString("0.00");
-            cPosY.Text = "Current Y: " + y.ToString("0.00");
-            cPosZ.Text = "Current Z: " + z.ToString("0.00");
-
+            ///get key states
             short keyStateI = GetAsyncKeyState(0x49);
             bool isIPressed = ((keyStateI >> 15) & 0x0001) == 0x0001;
 
@@ -158,42 +155,91 @@ namespace TeardownMemoryModder
             short keyStateSpace = GetAsyncKeyState(0x20);
             bool isSpacePressed = ((keyStateSpace >> 15) & 0x0001) == 0x0001;
 
+            ///save current position
             if (isIPressed && GetActiveWindowTitle() == "Teardown")
             {
-                btnSavePos_Click(null, null);
-            }
-            if (isKPressed && GetActiveWindowTitle() == "Teardown")
-            {
-                btnLoadPos_Click(null, null);
+                unusedRef = 0;
+                ReadProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
+                ReadProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
+                storedPosition = new List<float> { x, y, z };
+                savedCords.Text = String.Format("  Saved: {0} | {1} | {2}", numProc(x), numProc(y), numProc(z));
             }
 
+            ///load saved position
+            if (isKPressed && GetActiveWindowTitle() == "Teardown")
+            {
+                List<Byte> lBuffer = new List<Byte> { };
+                lBuffer.AddRange(BitConverter.GetBytes(storedPosition[0]));
+                lBuffer.AddRange(BitConverter.GetBytes(storedPosition[1]));
+                lBuffer.AddRange(BitConverter.GetBytes(storedPosition[2]));
+                buffer = lBuffer.ToArray();
+                unusedRef = 0;
+                WriteProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref unusedRef);
+                if (campos != null)
+                {
+                    WriteProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
+                    WriteProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
+                }
+            }
+
+            ///use jetpack
             if (isSpacePressed && cbJetpack.Checked)
             {
-                if(setVelo > 6)
+                if (first)
                 {
-                    setVelo = 6;
+                    byte[] currentVelo = new byte[4];
+                    ReadProcessMemory(processHandle, playerInstance + 0x38 + 4, currentVelo, currentVelo.Length, ref unusedRef);
+                    setVelo = BitConverter.ToSingle(currentVelo, 0);
+                    first = false;
+                }
+                if (setVelo > 12)
+                {
+                    setVelo = 12;
                 }
                 else
                 {
-                    setVelo += 0.5f;
+                    setVelo += 1.5f;
                 }
-                int wrote = 0;
+
                 List<byte> nvelocity = new List<Byte> { };
                 nvelocity.AddRange(BitConverter.GetBytes(setVelo));
                 byte[] arrVelocity = nvelocity.ToArray();
-                WriteProcessMemory(processHandle, playerInstance + 0x38+4, arrVelocity, arrVelocity.Length, ref wrote);
+                WriteProcessMemory(processHandle, playerInstance + 0x38 + 4, arrVelocity, arrVelocity.Length, ref unusedRef);
             }
             else
             {
-                setVelo = 3;
+                first = true;
             }
 
+            ///godmode
             if (cbStronk.Checked)
             {
                 int wrote = 0;
                 byte[] stronk = BitConverter.GetBytes(10f);
                 WriteProcessMemory(processHandle, playerInstance + 0x015C, stronk, stronk.Length, ref wrote);
             }
+        }
+
+        public float setVelo = 3;
+        bool first = true;
+
+        public string numProc(float inp)
+        {
+            string proc;
+            if (inp > 999.99 || inp < -999.99)
+            {
+                proc = "_ERROR";
+            }
+            else
+            {
+                proc = inp.ToString();
+            }
+            proc = String.Join("", proc.Take(6));
+            if (proc.Length < 6)
+            {
+                proc = "0" + proc;
+            }
+            return proc;
         }
 
         public IntPtr GetModuleBaseAddress(string processName, string moduleName)
@@ -207,37 +253,20 @@ namespace TeardownMemoryModder
 
             catch (IndexOutOfRangeException)
             {
-                throw new ArgumentException($"No process with name {processName} is currently running");
+                throw new ArgumentException("No process");
             }
             var module = process.Modules.Cast<ProcessModule>().SingleOrDefault(m => string.Equals(m.ModuleName, moduleName, StringComparison.OrdinalIgnoreCase));
             return module?.BaseAddress ?? IntPtr.Zero;
         }
-
+    
         private void btnSavePos_Click(object sender, EventArgs e)
         {
-            int unusedRef = 0;
-            ReadProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
-            ReadProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
-            storedPosition = new List<float> { x, y, z };
-            sPosX.Text = "Saved X: " + x.ToString("0.00");
-            sPosY.Text = "Saved Y: " + y.ToString("0.00");
-            sPosZ.Text = "Saved Z: " + z.ToString("0.00");
+
         }
 
         private void btnLoadPos_Click(object sender, EventArgs e)
         {
-            List<Byte> lBuffer = new List<Byte> { };
-            lBuffer.AddRange(BitConverter.GetBytes(storedPosition[0]));
-            lBuffer.AddRange(BitConverter.GetBytes(storedPosition[1]));
-            lBuffer.AddRange(BitConverter.GetBytes(storedPosition[2]));
-            byte[] buffer = lBuffer.ToArray();
-            int unusedRef = 0;
-            WriteProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref unusedRef);
-            if(campos != null)
-            {
-                WriteProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
-                WriteProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
-            }
+
         }
 
         private void btnSetFlashlightColour_Click(object sender, EventArgs e)
