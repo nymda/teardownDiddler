@@ -61,6 +61,8 @@ namespace TeardownMemoryModder
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        public string debugText = "";
         public int unusedRef = 0;
         public List<float> storedPosition = new List<float> { 0f, 0f, 0f };
         public byte[] campos = new byte[84];
@@ -87,10 +89,16 @@ namespace TeardownMemoryModder
 
         byte[] origionalWallCode = new byte[8];
 
+        public void nopInstruction(Int32 location)
+        {
+            int wrote = 0;
+            Int64 loc = process.MainModule.BaseAddress.ToInt64() + location;
+            WriteProcessMemory(processHandle, loc, new byte[] { 0x90 }, 1, ref wrote);
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-
             Process[] teardowns = Process.GetProcessesByName("teardown");
 
             if (teardowns.Length > 0)
@@ -102,20 +110,28 @@ namespace TeardownMemoryModder
                 Int32 bytesRead = 0;
                 processHandle = (Int32)handle;
 
+                debugText = debugText + "Entrypoint: 0x" + processHandle.ToString("X");
+
                 Int64 baseAddress = process.MainModule.BaseAddress.ToInt64() + 0x3E3520;
                 buffer = new byte[8];
                 ReadProcessMemory(processHandle, baseAddress, buffer, buffer.Length, ref bytesRead);
                 gameInstance = BitConverter.ToInt64(buffer, 0);
+
+                debugText = debugText + "\nGame instance: 0x" + gameInstance.ToString("X");
 
                 buffer = new byte[8];
                 Int64 playerPtr = gameInstance + 0xA0;
                 ReadProcessMemory(processHandle, playerPtr, buffer, buffer.Length, ref bytesRead);
                 playerInstance = BitConverter.ToInt64(buffer, 0);
 
+                debugText = debugText + "\nPlayer instance: 0x" + playerInstance.ToString("X");
+
                 buffer = new byte[8];
                 Int64 scenePtr = gameInstance + 0x40;
                 ReadProcessMemory(processHandle, scenePtr, buffer, buffer.Length, ref bytesRead);
                 sceneInstance = BitConverter.ToInt64(buffer, 0);
+
+                debugText = debugText + "\nScene instance: 0x" + sceneInstance.ToString("X");
 
                 Console.WriteLine(playerPtr);
 
@@ -136,6 +152,7 @@ namespace TeardownMemoryModder
             //---------
             int unusedRef = 0;
             Byte[] buffer = new byte[12];
+            lbl_debugInfo.Text = debugText;
             //---------
 
             ///read current position from memory
@@ -215,8 +232,8 @@ namespace TeardownMemoryModder
             if (cbStronk.Checked)
             {
                 int wrote = 0;
-                byte[] stronk = BitConverter.GetBytes(10f);
-                WriteProcessMemory(processHandle, playerInstance + 0x015C, stronk, stronk.Length, ref wrote);
+                byte[] stronk = BitConverter.GetBytes(1000f);
+                WriteProcessMemory(processHandle, playerInstance + 0x015C, stronk, stronk.Length, ref unusedRef);
             }
         }
 
@@ -286,6 +303,12 @@ namespace TeardownMemoryModder
             byte[] noWalls = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             int wrote = 0;
             WriteProcessMemory(processHandle, sceneInstance + 0x530, noWalls, noWalls.Length, ref wrote);
+        }
+
+        private void tbStep_Scroll(object sender, EventArgs e)
+        {
+            int wrote = 0;
+            //byte[] newStep = new byte[4]
         }
     }
 }

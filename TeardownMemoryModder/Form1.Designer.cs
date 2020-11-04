@@ -39,8 +39,10 @@
             this.cbJetpack = new System.Windows.Forms.CheckBox();
             this.setColour = new System.Windows.Forms.ColorDialog();
             this.gbDebug = new System.Windows.Forms.GroupBox();
+            this.lbl_debugInfo = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.gbDebug.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -50,7 +52,7 @@
             this.groupBox1.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(14, 10);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(346, 43);
+            this.groupBox1.Size = new System.Drawing.Size(322, 43);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Player position (Save [I] Load [K])";
@@ -88,7 +90,7 @@
             this.groupBox2.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(14, 58);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(346, 39);
+            this.groupBox2.Size = new System.Drawing.Size(322, 39);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc";
@@ -97,7 +99,7 @@
             // 
             this.btnRemoveBoundaries.Location = new System.Drawing.Point(7, 13);
             this.btnRemoveBoundaries.Name = "btnRemoveBoundaries";
-            this.btnRemoveBoundaries.Size = new System.Drawing.Size(166, 19);
+            this.btnRemoveBoundaries.Size = new System.Drawing.Size(144, 19);
             this.btnRemoveBoundaries.TabIndex = 3;
             this.btnRemoveBoundaries.Text = "Remove boundaries";
             this.btnRemoveBoundaries.UseVisualStyleBackColor = true;
@@ -106,7 +108,7 @@
             // cbStronk
             // 
             this.cbStronk.AutoSize = true;
-            this.cbStronk.Location = new System.Drawing.Point(258, 16);
+            this.cbStronk.Location = new System.Drawing.Point(238, 16);
             this.cbStronk.Name = "cbStronk";
             this.cbStronk.Size = new System.Drawing.Size(80, 15);
             this.cbStronk.TabIndex = 2;
@@ -116,7 +118,7 @@
             // cbJetpack
             // 
             this.cbJetpack.AutoSize = true;
-            this.cbJetpack.Location = new System.Drawing.Point(179, 16);
+            this.cbJetpack.Location = new System.Drawing.Point(159, 16);
             this.cbJetpack.Name = "cbJetpack";
             this.cbJetpack.Size = new System.Drawing.Size(73, 15);
             this.cbJetpack.TabIndex = 1;
@@ -125,19 +127,30 @@
             // 
             // gbDebug
             // 
+            this.gbDebug.Controls.Add(this.lbl_debugInfo);
             this.gbDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbDebug.Location = new System.Drawing.Point(14, 102);
+            this.gbDebug.Location = new System.Drawing.Point(14, 103);
             this.gbDebug.Name = "gbDebug";
-            this.gbDebug.Size = new System.Drawing.Size(346, 336);
+            this.gbDebug.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.gbDebug.Size = new System.Drawing.Size(322, 65);
             this.gbDebug.TabIndex = 4;
             this.gbDebug.TabStop = false;
             this.gbDebug.Text = "Debug";
+            // 
+            // lbl_debugInfo
+            // 
+            this.lbl_debugInfo.AutoSize = true;
+            this.lbl_debugInfo.Location = new System.Drawing.Point(7, 14);
+            this.lbl_debugInfo.Name = "lbl_debugInfo";
+            this.lbl_debugInfo.Size = new System.Drawing.Size(117, 44);
+            this.lbl_debugInfo.TabIndex = 3;
+            this.lbl_debugInfo.Text = "Entrypoint:\r\nGame instance:\r\nPlayer instance:\r\nScene instance:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 11F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(373, 448);
+            this.ClientSize = new System.Drawing.Size(348, 178);
             this.Controls.Add(this.gbDebug);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -150,6 +163,8 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.gbDebug.ResumeLayout(false);
+            this.gbDebug.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -166,6 +181,7 @@
         private System.Windows.Forms.CheckBox cbStronk;
         private System.Windows.Forms.Button btnRemoveBoundaries;
         private System.Windows.Forms.GroupBox gbDebug;
+        private System.Windows.Forms.Label lbl_debugInfo;
     }
 }
 
