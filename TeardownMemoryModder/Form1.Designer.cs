@@ -41,7 +41,6 @@
             this.cbJetpack = new System.Windows.Forms.CheckBox();
             this.setColour = new System.Windows.Forms.ColorDialog();
             this.gbDebug = new System.Windows.Forms.GroupBox();
-            this.lbl_debugInfo = new System.Windows.Forms.Label();
             this.keyHandler = new System.Windows.Forms.Timer(this.components);
             this.gbReapply = new System.Windows.Forms.GroupBox();
             this.btnReapply = new System.Windows.Forms.Button();
@@ -50,6 +49,7 @@
             this.cbStepPatch = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.nudStepHeight = new System.Windows.Forms.NumericUpDown();
+            this.dbgTxt = new System.Windows.Forms.TextBox();
             this.gbPos.SuspendLayout();
             this.gbMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHealthSpeed)).BeginInit();
@@ -171,24 +171,15 @@
             // 
             // gbDebug
             // 
-            this.gbDebug.Controls.Add(this.lbl_debugInfo);
+            this.gbDebug.Controls.Add(this.dbgTxt);
             this.gbDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbDebug.Location = new System.Drawing.Point(14, 204);
             this.gbDebug.Name = "gbDebug";
             this.gbDebug.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.gbDebug.Size = new System.Drawing.Size(322, 65);
+            this.gbDebug.Size = new System.Drawing.Size(322, 79);
             this.gbDebug.TabIndex = 4;
             this.gbDebug.TabStop = false;
             this.gbDebug.Text = "Debug";
-            // 
-            // lbl_debugInfo
-            // 
-            this.lbl_debugInfo.AutoSize = true;
-            this.lbl_debugInfo.Location = new System.Drawing.Point(7, 14);
-            this.lbl_debugInfo.Name = "lbl_debugInfo";
-            this.lbl_debugInfo.Size = new System.Drawing.Size(117, 44);
-            this.lbl_debugInfo.TabIndex = 3;
-            this.lbl_debugInfo.Text = "Entrypoint:\r\nGame instance:\r\nPlayer instance:\r\nScene instance:";
             // 
             // keyHandler
             // 
@@ -198,7 +189,7 @@
             // 
             this.gbReapply.Controls.Add(this.btnReapply);
             this.gbReapply.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbReapply.Location = new System.Drawing.Point(14, 275);
+            this.gbReapply.Location = new System.Drawing.Point(14, 289);
             this.gbReapply.Name = "gbReapply";
             this.gbReapply.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.gbReapply.Size = new System.Drawing.Size(322, 53);
@@ -212,7 +203,7 @@
             this.btnReapply.Name = "btnReapply";
             this.btnReapply.Size = new System.Drawing.Size(307, 30);
             this.btnReapply.TabIndex = 0;
-            this.btnReapply.Text = "Reapply patches";
+            this.btnReapply.Text = "Re-apply patches";
             this.btnReapply.UseVisualStyleBackColor = true;
             this.btnReapply.Click += new System.EventHandler(this.btnReapply_Click);
             // 
@@ -278,11 +269,21 @@
             0});
             this.nudStepHeight.ValueChanged += new System.EventHandler(this.nudStepHeight_ValueChanged);
             // 
+            // dbgTxt
+            // 
+            this.dbgTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.dbgTxt.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.dbgTxt.Location = new System.Drawing.Point(8, 16);
+            this.dbgTxt.Multiline = true;
+            this.dbgTxt.Name = "dbgTxt";
+            this.dbgTxt.Size = new System.Drawing.Size(306, 53);
+            this.dbgTxt.TabIndex = 0;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 11F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 338);
+            this.ClientSize = new System.Drawing.Size(348, 353);
             this.Controls.Add(this.gbStep);
             this.Controls.Add(this.gbSpeed);
             this.Controls.Add(this.gbReapply);
@@ -322,7 +323,6 @@
         private System.Windows.Forms.CheckBox cbStronk;
         private System.Windows.Forms.Button btnRemoveBoundaries;
         private System.Windows.Forms.GroupBox gbDebug;
-        private System.Windows.Forms.Label lbl_debugInfo;
         private System.Windows.Forms.Timer keyHandler;
         private System.Windows.Forms.Label curCords;
         private System.Windows.Forms.Label lblphealthspeed;
@@ -334,6 +334,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown nudStepHeight;
         private System.Windows.Forms.CheckBox cbStepPatch;
+        private System.Windows.Forms.TextBox dbgTxt;
     }
 }
 

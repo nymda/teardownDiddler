@@ -108,28 +108,32 @@ namespace TeardownMemoryModder
                 Int32 bytesRead = 0;
                 processHandle = (Int32)handle;
 
-                debugText = debugText + "Entrypoint: 0x" + processHandle.ToString("X");
+                dbgTxt.AppendText("     Entrypoint : 0x" + processHandle.ToString("X"));
+                dbgTxt.AppendText(Environment.NewLine);
 
                 Int64 baseAddress = process.MainModule.BaseAddress.ToInt64() + 0x003E4520;
                 buffer = new byte[8];
                 ReadProcessMemory(processHandle, baseAddress, buffer, buffer.Length, ref bytesRead);
                 gameInstance = BitConverter.ToInt64(buffer, 0);
 
-                debugText = debugText + "\nGame instance: 0x" + gameInstance.ToString("X");
+                dbgTxt.AppendText("  Game instance : 0x" + gameInstance.ToString("X"));
+                dbgTxt.AppendText(Environment.NewLine);
 
                 buffer = new byte[8];
                 Int64 playerPtr = gameInstance + 0xA0;
                 ReadProcessMemory(processHandle, playerPtr, buffer, buffer.Length, ref bytesRead);
                 playerInstance = BitConverter.ToInt64(buffer, 0);
 
-                debugText = debugText + "\nPlayer instance: 0x" + playerInstance.ToString("X");
+                dbgTxt.AppendText("Player instance : 0x" + playerInstance.ToString("X"));
+                dbgTxt.AppendText(Environment.NewLine);
 
                 buffer = new byte[8];
                 Int64 scenePtr = gameInstance + 0x40;
                 ReadProcessMemory(processHandle, scenePtr, buffer, buffer.Length, ref bytesRead);
                 sceneInstance = BitConverter.ToInt64(buffer, 0);
 
-                debugText = debugText + "\nScene instance: 0x" + sceneInstance.ToString("X");
+                dbgTxt.AppendText(" Scene instance : 0x" + sceneInstance.ToString("X"));
+                dbgTxt.AppendText(Environment.NewLine);
 
                 Console.WriteLine(playerPtr);
 
@@ -162,10 +166,6 @@ namespace TeardownMemoryModder
 
         private void updateCurrentPositions_Tick(object sender, EventArgs e)
         {
-            //---------
-            lbl_debugInfo.Text = debugText;
-            //---------
-
             ///get key states
             short keyStateI = GetAsyncKeyState(0x49);
             bool isIPressed = ((keyStateI >> 15) & 0x0001) == 0x0001;
