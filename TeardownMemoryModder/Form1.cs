@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TeardownMemoryModder.Mods;
 
 namespace TeardownMemoryModder
 {
@@ -52,15 +53,18 @@ namespace TeardownMemoryModder
         [DllImport("kernel32.dll")]
         public static extern bool ReadProcessMemory(int hProcess, Int64 lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
 
-        [DllImport("kernel32.dll")]
-        internal static extern bool IsWow64Process(SafeProcessHandle processHandle, out bool isWow64Process);
-
         [DllImport("User32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        public offsetPackage pack;
+        public removeBoundaries removeBoundaries;
+        public teleport teleport;
+        public jetpack jetpack;
+        public immortality immortality;
 
         public string debugText = "";
         public int unusedRef = 0;
@@ -76,12 +80,6 @@ namespace TeardownMemoryModder
         const int PROCESS_VM_WRITE = 0x0020;
         const int PROCESS_VM_OPERATION = 0x0008;
         const int PROCESS_ALL_ACCESS = 0x1F0FFF;
-        Process process;
-        IntPtr handle;
-        Int64 playerInstance;
-        Int64 gameInstance;
-        Int32 processHandle;
-        Int64 sceneInstance;
 
         float x;
         float y;
@@ -89,20 +87,25 @@ namespace TeardownMemoryModder
 
         byte[] origionalWallCode = new byte[8];
 
-        public void nopInstruction(Int32 location)
-        {
-            int wrote = 0;
-            Int64 loc = process.MainModule.BaseAddress.ToInt64() + location;
-            WriteProcessMemory(processHandle, loc, new byte[] { 0x90 }, 1, ref wrote);
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-            Process[] teardowns = Process.GetProcessesByName("teardown");
+            init();
+        }
 
+        public void init()
+        {
+            Process[] teardowns = Process.GetProcessesByName("teardown");
             if (teardowns.Length > 0)
             {
+                //calculate nessicary offsets
+                Process process;
+                IntPtr handle;
+                Int64 playerInstance;
+                Int64 gameInstance;
+                Int32 processHandle;
+                Int64 sceneInstance;
+
                 process = teardowns[0];
                 handle = OpenProcess(PROCESS_ALL_ACCESS, false, process.Id);
 
@@ -138,29 +141,31 @@ namespace TeardownMemoryModder
                 int read_vcount = 0;
                 ReadProcessMemory(processHandle, sceneInstance + 0x530, origionalWallCode, origionalWallCode.Length, ref read_vcount);
 
+                //create the offsetpackage
+                pack = new offsetPackage(process, handle, playerInstance, gameInstance, processHandle, sceneInstance);
+
+                //initialise mods
+                removeBoundaries = new removeBoundaries(pack);
+                teleport = new teleport(pack);
+                jetpack = new jetpack(pack);
+                immortality = new immortality(pack);
+
+                this.Text = "Teardown diddler [ACTIVE]";
+
                 updateCurrentPositions.Start();
             }
             else
             {
-                this.Text = "Teardown diddler [TD NOT RUNNING]";
+                this.Text = "Teardown diddler [INACTIVE]";
             }
-
         }
 
         private void updateCurrentPositions_Tick(object sender, EventArgs e)
         {
             //---------
             int unusedRef = 0;
-            Byte[] buffer = new byte[12];
             lbl_debugInfo.Text = debugText;
             //---------
-
-            ///read current position from memory
-            ReadProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref unusedRef);
-            x = BitConverter.ToSingle(buffer, 0);
-            y = BitConverter.ToSingle(buffer, 4);
-            z = BitConverter.ToSingle(buffer, 8);
-            curCords.Text = String.Format("Current: {0} | {1} | {2}", numProc(x), numProc(y), numProc(z));
 
             ///get key states
             short keyStateI = GetAsyncKeyState(0x49);
@@ -172,73 +177,33 @@ namespace TeardownMemoryModder
             short keyStateSpace = GetAsyncKeyState(0x20);
             bool isSpacePressed = ((keyStateSpace >> 15) & 0x0001) == 0x0001;
 
+            //read current position
+            List<float> TmpPos = teleport.readPositon();
+            curCords.Text = String.Format("Current: {0} | {1} | {2}", numProc(TmpPos[0]), numProc(TmpPos[1]), numProc(TmpPos[2]));
+
             ///save current position
             if (isIPressed && GetActiveWindowTitle() == "Teardown")
             {
-                unusedRef = 0;
-                ReadProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
-                ReadProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
-                storedPosition = new List<float> { x, y, z };
-                savedCords.Text = String.Format("  Saved: {0} | {1} | {2}", numProc(x), numProc(y), numProc(z));
+                List<float> pos = teleport.savePosition();
+                savedCords.Text = String.Format("Current: {0} | {1} | {2}", numProc(pos[0]), numProc(pos[1]), numProc(pos[2]));
             }
 
             ///load saved position
             if (isKPressed && GetActiveWindowTitle() == "Teardown")
             {
-                List<Byte> lBuffer = new List<Byte> { };
-                lBuffer.AddRange(BitConverter.GetBytes(storedPosition[0]));
-                lBuffer.AddRange(BitConverter.GetBytes(storedPosition[1]));
-                lBuffer.AddRange(BitConverter.GetBytes(storedPosition[2]));
-                buffer = lBuffer.ToArray();
-                unusedRef = 0;
-                WriteProcessMemory(processHandle, playerInstance, buffer, buffer.Length, ref unusedRef);
-                if (campos != null)
-                {
-                    WriteProcessMemory(processHandle, playerInstance + 0x0060, campos, campos.Length, ref unusedRef);
-                    WriteProcessMemory(processHandle, playerInstance + 0x00C4, camang, camang.Length, ref unusedRef);
-                }
+                teleport.loadPosition();
             }
 
             ///use jetpack
             if (isSpacePressed && cbJetpack.Checked)
             {
-                if (first)
-                {
-                    byte[] currentVelo = new byte[4];
-                    ReadProcessMemory(processHandle, playerInstance + 0x38 + 4, currentVelo, currentVelo.Length, ref unusedRef);
-                    setVelo = BitConverter.ToSingle(currentVelo, 0);
-                    first = false;
-                }
-                if (setVelo > 12)
-                {
-                    setVelo = 12;
-                }
-                else
-                {
-                    setVelo += 1.5f;
-                }
-
-                List<byte> nvelocity = new List<Byte> { };
-                nvelocity.AddRange(BitConverter.GetBytes(setVelo));
-                byte[] arrVelocity = nvelocity.ToArray();
-                WriteProcessMemory(processHandle, playerInstance + 0x38 + 4, arrVelocity, arrVelocity.Length, ref unusedRef);
+                jetpack.boost();
             }
             else
             {
-                first = true;
-            }
-
-            ///godmode
-            if (cbStronk.Checked)
-            {
-                int wrote = 0;
-                byte[] stronk = BitConverter.GetBytes(1000f);
-                WriteProcessMemory(processHandle, playerInstance + 0x015C, stronk, stronk.Length, ref unusedRef);
+                jetpack.first = true;
             }
         }
-
-        public float setVelo = 3;
-        bool first = true;
 
         public string numProc(float inp)
         {
@@ -259,56 +224,29 @@ namespace TeardownMemoryModder
             return proc;
         }
 
-        public IntPtr GetModuleBaseAddress(string processName, string moduleName)
-        {
-            Process process;
-
-            try
-            {
-                process = Process.GetProcessesByName(processName)[0];
-            }
-
-            catch (IndexOutOfRangeException)
-            {
-                throw new ArgumentException("No process");
-            }
-            var module = process.Modules.Cast<ProcessModule>().SingleOrDefault(m => string.Equals(m.ModuleName, moduleName, StringComparison.OrdinalIgnoreCase));
-            return module?.BaseAddress ?? IntPtr.Zero;
-        }
-    
-        private void btnSavePos_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnLoadPos_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnSetFlashlightColour_Click(object sender, EventArgs e)
-        {
-            setColour.FullOpen = true;
-            if(setColour.ShowDialog() == DialogResult.OK)
-            {
-                byte[] buffer = new byte[64];
-
-                int read = 0;
-                ReadProcessMemory(processHandle, sceneInstance + 0xE8, buffer, buffer.Length, ref read);
-            }
-        }
-
         private void btnRemoveBoundaries_Click(object sender, EventArgs e)
         {
-            byte[] noWalls = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-            int wrote = 0;
-            WriteProcessMemory(processHandle, sceneInstance + 0x530, noWalls, noWalls.Length, ref wrote);
+            removeBoundaries.activate();
         }
 
-        private void tbStep_Scroll(object sender, EventArgs e)
+        private void cbStronk_CheckedChanged(object sender, EventArgs e)
         {
-            int wrote = 0;
-            //byte[] newStep = new byte[4]
+            if (cbStronk.Checked)
+            {
+                immortality.patchImmortality();
+                nudHealthSpeed.Enabled = true;
+            }
+            else
+            {
+                immortality.unPatchImmortality();
+                nudHealthSpeed.Enabled = false;
+            }
+        }
+
+        private void nudHealthSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            immortality.setCurrentHealth((float)nudHealthSpeed.Value);
+            Console.WriteLine(nudHealthSpeed.Value);
         }
     }
 }

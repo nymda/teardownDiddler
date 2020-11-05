@@ -40,9 +40,16 @@
             this.setColour = new System.Windows.Forms.ColorDialog();
             this.gbDebug = new System.Windows.Forms.GroupBox();
             this.lbl_debugInfo = new System.Windows.Forms.Label();
+            this.keyHandler = new System.Windows.Forms.Timer(this.components);
+            this.nudHealthSpeed = new System.Windows.Forms.NumericUpDown();
+            this.lblphealthspeed = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnReapply = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gbDebug.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHealthSpeed)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -84,13 +91,15 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.lblphealthspeed);
+            this.groupBox2.Controls.Add(this.nudHealthSpeed);
             this.groupBox2.Controls.Add(this.btnRemoveBoundaries);
             this.groupBox2.Controls.Add(this.cbStronk);
             this.groupBox2.Controls.Add(this.cbJetpack);
             this.groupBox2.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(14, 58);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(322, 39);
+            this.groupBox2.Size = new System.Drawing.Size(322, 64);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc";
@@ -114,6 +123,7 @@
             this.cbStronk.TabIndex = 2;
             this.cbStronk.Text = "Immortal";
             this.cbStronk.UseVisualStyleBackColor = true;
+            this.cbStronk.CheckedChanged += new System.EventHandler(this.cbStronk_CheckedChanged);
             // 
             // cbJetpack
             // 
@@ -129,7 +139,7 @@
             // 
             this.gbDebug.Controls.Add(this.lbl_debugInfo);
             this.gbDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbDebug.Location = new System.Drawing.Point(14, 103);
+            this.gbDebug.Location = new System.Drawing.Point(14, 128);
             this.gbDebug.Name = "gbDebug";
             this.gbDebug.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.gbDebug.Size = new System.Drawing.Size(322, 65);
@@ -146,11 +156,65 @@
             this.lbl_debugInfo.TabIndex = 3;
             this.lbl_debugInfo.Text = "Entrypoint:\r\nGame instance:\r\nPlayer instance:\r\nScene instance:";
             // 
+            // keyHandler
+            // 
+            this.keyHandler.Interval = 30;
+            // 
+            // nudHealthSpeed
+            // 
+            this.nudHealthSpeed.Enabled = false;
+            this.nudHealthSpeed.Location = new System.Drawing.Point(238, 37);
+            this.nudHealthSpeed.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudHealthSpeed.Name = "nudHealthSpeed";
+            this.nudHealthSpeed.Size = new System.Drawing.Size(78, 18);
+            this.nudHealthSpeed.TabIndex = 4;
+            this.nudHealthSpeed.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudHealthSpeed.ValueChanged += new System.EventHandler(this.nudHealthSpeed_ValueChanged);
+            // 
+            // lblphealthspeed
+            // 
+            this.lblphealthspeed.AutoSize = true;
+            this.lblphealthspeed.Location = new System.Drawing.Point(73, 39);
+            this.lblphealthspeed.Name = "lblphealthspeed";
+            this.lblphealthspeed.Size = new System.Drawing.Size(159, 11);
+            this.lblphealthspeed.TabIndex = 5;
+            this.lblphealthspeed.Text = "Player health / speed:";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.btnReapply);
+            this.groupBox3.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox3.Location = new System.Drawing.Point(14, 199);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.groupBox3.Size = new System.Drawing.Size(322, 53);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Patch";
+            // 
+            // btnReapply
+            // 
+            this.btnReapply.Location = new System.Drawing.Point(9, 17);
+            this.btnReapply.Name = "btnReapply";
+            this.btnReapply.Size = new System.Drawing.Size(307, 30);
+            this.btnReapply.TabIndex = 0;
+            this.btnReapply.Text = "Reapply patches";
+            this.btnReapply.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 11F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 178);
+            this.ClientSize = new System.Drawing.Size(348, 264);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.gbDebug);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -165,6 +229,8 @@
             this.groupBox2.PerformLayout();
             this.gbDebug.ResumeLayout(false);
             this.gbDebug.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHealthSpeed)).EndInit();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -173,7 +239,6 @@
 
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label savedCords;
-        private System.Windows.Forms.Label curCords;
         private System.Windows.Forms.Timer updateCurrentPositions;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ColorDialog setColour;
@@ -182,6 +247,12 @@
         private System.Windows.Forms.Button btnRemoveBoundaries;
         private System.Windows.Forms.GroupBox gbDebug;
         private System.Windows.Forms.Label lbl_debugInfo;
+        private System.Windows.Forms.Timer keyHandler;
+        private System.Windows.Forms.Label curCords;
+        private System.Windows.Forms.Label lblphealthspeed;
+        private System.Windows.Forms.NumericUpDown nudHealthSpeed;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button btnReapply;
     }
 }
 
