@@ -65,6 +65,7 @@ namespace TeardownMemoryModder
         public teleport teleport;
         public jetpack jetpack;
         public immortality immortality;
+        public step step;
 
         public string debugText = "";
         public int unusedRef = 0;
@@ -77,13 +78,7 @@ namespace TeardownMemoryModder
         private const UInt32 SWP_NOMOVE = 0x0002;
         private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
 
-        const int PROCESS_VM_WRITE = 0x0020;
-        const int PROCESS_VM_OPERATION = 0x0008;
         const int PROCESS_ALL_ACCESS = 0x1F0FFF;
-
-        float x;
-        float y;
-        float z;
 
         byte[] origionalWallCode = new byte[8];
 
@@ -115,7 +110,7 @@ namespace TeardownMemoryModder
 
                 debugText = debugText + "Entrypoint: 0x" + processHandle.ToString("X");
 
-                Int64 baseAddress = process.MainModule.BaseAddress.ToInt64() + 0x3E3520;
+                Int64 baseAddress = process.MainModule.BaseAddress.ToInt64() + 0x003E4520;
                 buffer = new byte[8];
                 ReadProcessMemory(processHandle, baseAddress, buffer, buffer.Length, ref bytesRead);
                 gameInstance = BitConverter.ToInt64(buffer, 0);
@@ -149,6 +144,7 @@ namespace TeardownMemoryModder
                 teleport = new teleport(pack);
                 jetpack = new jetpack(pack);
                 immortality = new immortality(pack);
+                step = new step(pack);
 
                 this.Text = "Teardown diddler [ACTIVE]";
 
@@ -157,13 +153,16 @@ namespace TeardownMemoryModder
             else
             {
                 this.Text = "Teardown diddler [INACTIVE]";
+                gbDebug.Enabled = false;
+                gbMisc.Enabled = false;
+                gbPos.Enabled = false;
+                gbReapply.Enabled = false;
             }
         }
 
         private void updateCurrentPositions_Tick(object sender, EventArgs e)
         {
             //---------
-            int unusedRef = 0;
             lbl_debugInfo.Text = debugText;
             //---------
 
@@ -247,6 +246,38 @@ namespace TeardownMemoryModder
         {
             immortality.setCurrentHealth((float)nudHealthSpeed.Value);
             Console.WriteLine(nudHealthSpeed.Value);
+        }
+
+        private void btnReapply_Click(object sender, EventArgs e)
+        {
+            if (cbStronk.Checked)
+            {
+                immortality.patchImmortality();
+                immortality.setCurrentHealth((float)nudHealthSpeed.Value);
+            }
+            if (removeBoundaries.isActive)
+            {
+                removeBoundaries.activate();
+            }
+        }
+
+        private void cbStepPatch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbStepPatch.Checked)
+            {
+                step.patchStep();
+                nudStepHeight.Enabled = true;
+            }
+            else
+            {
+                //unpatch step
+                nudStepHeight.Enabled = false;
+            }
+        }
+
+        private void nudStepHeight_ValueChanged(object sender, EventArgs e)
+        {
+            step.setStepHeight((int)nudStepHeight.Value);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace TeardownMemoryModder
         static extern bool WriteProcessMemory(int hProcess, Int64 lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesWritten);
         #endregion
 
+        public bool isActive = false;
         public int discardRef = 0;
         offsetPackage pack { get; set; }
 
@@ -24,6 +25,7 @@ namespace TeardownMemoryModder
 
         public void activate()
         {
+            isActive = true;
             long modLocation = pack.sceneInstance + 0x530;
             byte[] noWalls = new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             WriteProcessMemory(pack.processHandle, modLocation, noWalls, noWalls.Length, ref discardRef);

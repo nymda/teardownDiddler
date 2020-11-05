@@ -25,8 +25,8 @@ namespace TeardownMemoryModder.Mods
         public void patchImmortality()
         {
             byte[] nop = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8A63, nop, nop.Length, ref discardRef);
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA5EF2, nop, nop.Length, ref discardRef);
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6182, nop, nop.Length, ref discardRef); //patch instructions for speedhack
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8CF3, nop, nop.Length, ref discardRef); //patch instrustions for immortality
         }
 
         public void unPatchImmortality()

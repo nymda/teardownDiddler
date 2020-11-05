@@ -29,11 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gbPos = new System.Windows.Forms.GroupBox();
             this.savedCords = new System.Windows.Forms.Label();
             this.curCords = new System.Windows.Forms.Label();
             this.updateCurrentPositions = new System.Windows.Forms.Timer(this.components);
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.gbMisc = new System.Windows.Forms.GroupBox();
+            this.lblphealthspeed = new System.Windows.Forms.Label();
+            this.nudHealthSpeed = new System.Windows.Forms.NumericUpDown();
             this.btnRemoveBoundaries = new System.Windows.Forms.Button();
             this.cbStronk = new System.Windows.Forms.CheckBox();
             this.cbJetpack = new System.Windows.Forms.CheckBox();
@@ -41,28 +43,34 @@
             this.gbDebug = new System.Windows.Forms.GroupBox();
             this.lbl_debugInfo = new System.Windows.Forms.Label();
             this.keyHandler = new System.Windows.Forms.Timer(this.components);
-            this.nudHealthSpeed = new System.Windows.Forms.NumericUpDown();
-            this.lblphealthspeed = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.gbReapply = new System.Windows.Forms.GroupBox();
             this.btnReapply = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.gbDebug.SuspendLayout();
+            this.gbSpeed = new System.Windows.Forms.GroupBox();
+            this.gbStep = new System.Windows.Forms.GroupBox();
+            this.cbStepPatch = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.nudStepHeight = new System.Windows.Forms.NumericUpDown();
+            this.gbPos.SuspendLayout();
+            this.gbMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHealthSpeed)).BeginInit();
-            this.groupBox3.SuspendLayout();
+            this.gbDebug.SuspendLayout();
+            this.gbReapply.SuspendLayout();
+            this.gbSpeed.SuspendLayout();
+            this.gbStep.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStepHeight)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // gbPos
             // 
-            this.groupBox1.Controls.Add(this.savedCords);
-            this.groupBox1.Controls.Add(this.curCords);
-            this.groupBox1.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(14, 10);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(322, 43);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Player position (Save [I] Load [K])";
+            this.gbPos.Controls.Add(this.savedCords);
+            this.gbPos.Controls.Add(this.curCords);
+            this.gbPos.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbPos.Location = new System.Drawing.Point(14, 10);
+            this.gbPos.Name = "gbPos";
+            this.gbPos.Size = new System.Drawing.Size(322, 43);
+            this.gbPos.TabIndex = 0;
+            this.gbPos.TabStop = false;
+            this.gbPos.Text = "Player position (Save [I] Load [K])";
             // 
             // savedCords
             // 
@@ -89,20 +97,46 @@
             this.updateCurrentPositions.Interval = 50;
             this.updateCurrentPositions.Tick += new System.EventHandler(this.updateCurrentPositions_Tick);
             // 
-            // groupBox2
+            // gbMisc
             // 
-            this.groupBox2.Controls.Add(this.lblphealthspeed);
-            this.groupBox2.Controls.Add(this.nudHealthSpeed);
-            this.groupBox2.Controls.Add(this.btnRemoveBoundaries);
-            this.groupBox2.Controls.Add(this.cbStronk);
-            this.groupBox2.Controls.Add(this.cbJetpack);
-            this.groupBox2.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(14, 58);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(322, 64);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Misc";
+            this.gbMisc.Controls.Add(this.btnRemoveBoundaries);
+            this.gbMisc.Controls.Add(this.cbStronk);
+            this.gbMisc.Controls.Add(this.cbJetpack);
+            this.gbMisc.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbMisc.Location = new System.Drawing.Point(14, 58);
+            this.gbMisc.Name = "gbMisc";
+            this.gbMisc.Size = new System.Drawing.Size(322, 40);
+            this.gbMisc.TabIndex = 1;
+            this.gbMisc.TabStop = false;
+            this.gbMisc.Text = "Misc";
+            // 
+            // lblphealthspeed
+            // 
+            this.lblphealthspeed.AutoSize = true;
+            this.lblphealthspeed.Location = new System.Drawing.Point(9, 19);
+            this.lblphealthspeed.Name = "lblphealthspeed";
+            this.lblphealthspeed.Size = new System.Drawing.Size(159, 11);
+            this.lblphealthspeed.TabIndex = 5;
+            this.lblphealthspeed.Text = "Player health / speed:";
+            // 
+            // nudHealthSpeed
+            // 
+            this.nudHealthSpeed.Enabled = false;
+            this.nudHealthSpeed.Location = new System.Drawing.Point(174, 17);
+            this.nudHealthSpeed.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudHealthSpeed.Name = "nudHealthSpeed";
+            this.nudHealthSpeed.Size = new System.Drawing.Size(78, 18);
+            this.nudHealthSpeed.TabIndex = 4;
+            this.nudHealthSpeed.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudHealthSpeed.ValueChanged += new System.EventHandler(this.nudHealthSpeed_ValueChanged);
             // 
             // btnRemoveBoundaries
             // 
@@ -139,7 +173,7 @@
             // 
             this.gbDebug.Controls.Add(this.lbl_debugInfo);
             this.gbDebug.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbDebug.Location = new System.Drawing.Point(14, 128);
+            this.gbDebug.Location = new System.Drawing.Point(14, 204);
             this.gbDebug.Name = "gbDebug";
             this.gbDebug.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.gbDebug.Size = new System.Drawing.Size(322, 65);
@@ -160,45 +194,17 @@
             // 
             this.keyHandler.Interval = 30;
             // 
-            // nudHealthSpeed
+            // gbReapply
             // 
-            this.nudHealthSpeed.Enabled = false;
-            this.nudHealthSpeed.Location = new System.Drawing.Point(238, 37);
-            this.nudHealthSpeed.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudHealthSpeed.Name = "nudHealthSpeed";
-            this.nudHealthSpeed.Size = new System.Drawing.Size(78, 18);
-            this.nudHealthSpeed.TabIndex = 4;
-            this.nudHealthSpeed.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudHealthSpeed.ValueChanged += new System.EventHandler(this.nudHealthSpeed_ValueChanged);
-            // 
-            // lblphealthspeed
-            // 
-            this.lblphealthspeed.AutoSize = true;
-            this.lblphealthspeed.Location = new System.Drawing.Point(73, 39);
-            this.lblphealthspeed.Name = "lblphealthspeed";
-            this.lblphealthspeed.Size = new System.Drawing.Size(159, 11);
-            this.lblphealthspeed.TabIndex = 5;
-            this.lblphealthspeed.Text = "Player health / speed:";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.btnReapply);
-            this.groupBox3.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox3.Location = new System.Drawing.Point(14, 199);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.groupBox3.Size = new System.Drawing.Size(322, 53);
-            this.groupBox3.TabIndex = 5;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Patch";
+            this.gbReapply.Controls.Add(this.btnReapply);
+            this.gbReapply.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbReapply.Location = new System.Drawing.Point(14, 275);
+            this.gbReapply.Name = "gbReapply";
+            this.gbReapply.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.gbReapply.Size = new System.Drawing.Size(322, 53);
+            this.gbReapply.TabIndex = 5;
+            this.gbReapply.TabStop = false;
+            this.gbReapply.Text = "Patch";
             // 
             // btnReapply
             // 
@@ -208,39 +214,109 @@
             this.btnReapply.TabIndex = 0;
             this.btnReapply.Text = "Reapply patches";
             this.btnReapply.UseVisualStyleBackColor = true;
+            this.btnReapply.Click += new System.EventHandler(this.btnReapply_Click);
+            // 
+            // gbSpeed
+            // 
+            this.gbSpeed.Controls.Add(this.lblphealthspeed);
+            this.gbSpeed.Controls.Add(this.nudHealthSpeed);
+            this.gbSpeed.Location = new System.Drawing.Point(14, 104);
+            this.gbSpeed.Name = "gbSpeed";
+            this.gbSpeed.Size = new System.Drawing.Size(322, 42);
+            this.gbSpeed.TabIndex = 6;
+            this.gbSpeed.TabStop = false;
+            this.gbSpeed.Text = "Speed (Requires immortality patch)";
+            // 
+            // gbStep
+            // 
+            this.gbStep.Controls.Add(this.label1);
+            this.gbStep.Controls.Add(this.nudStepHeight);
+            this.gbStep.Controls.Add(this.cbStepPatch);
+            this.gbStep.Location = new System.Drawing.Point(14, 152);
+            this.gbStep.Name = "gbStep";
+            this.gbStep.Size = new System.Drawing.Size(322, 46);
+            this.gbStep.TabIndex = 7;
+            this.gbStep.TabStop = false;
+            this.gbStep.Text = "Step";
+            // 
+            // cbStepPatch
+            // 
+            this.cbStepPatch.AutoSize = true;
+            this.cbStepPatch.Location = new System.Drawing.Point(222, 20);
+            this.cbStepPatch.Name = "cbStepPatch";
+            this.cbStepPatch.Size = new System.Drawing.Size(94, 15);
+            this.cbStepPatch.TabIndex = 0;
+            this.cbStepPatch.Text = "Step patch";
+            this.cbStepPatch.UseVisualStyleBackColor = true;
+            this.cbStepPatch.CheckedChanged += new System.EventHandler(this.cbStepPatch_CheckedChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 21);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(54, 11);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Height:";
+            // 
+            // nudStepHeight
+            // 
+            this.nudStepHeight.Enabled = false;
+            this.nudStepHeight.Location = new System.Drawing.Point(69, 19);
+            this.nudStepHeight.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudStepHeight.Name = "nudStepHeight";
+            this.nudStepHeight.Size = new System.Drawing.Size(78, 18);
+            this.nudStepHeight.TabIndex = 6;
+            this.nudStepHeight.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudStepHeight.ValueChanged += new System.EventHandler(this.nudStepHeight_ValueChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 11F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 264);
-            this.Controls.Add(this.groupBox3);
+            this.ClientSize = new System.Drawing.Size(348, 338);
+            this.Controls.Add(this.gbStep);
+            this.Controls.Add(this.gbSpeed);
+            this.Controls.Add(this.gbReapply);
             this.Controls.Add(this.gbDebug);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.gbMisc);
+            this.Controls.Add(this.gbPos);
             this.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
             this.Text = "Teardown diddler";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.gbPos.ResumeLayout(false);
+            this.gbPos.PerformLayout();
+            this.gbMisc.ResumeLayout(false);
+            this.gbMisc.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHealthSpeed)).EndInit();
             this.gbDebug.ResumeLayout(false);
             this.gbDebug.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudHealthSpeed)).EndInit();
-            this.groupBox3.ResumeLayout(false);
+            this.gbReapply.ResumeLayout(false);
+            this.gbSpeed.ResumeLayout(false);
+            this.gbSpeed.PerformLayout();
+            this.gbStep.ResumeLayout(false);
+            this.gbStep.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStepHeight)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbPos;
         private System.Windows.Forms.Label savedCords;
         private System.Windows.Forms.Timer updateCurrentPositions;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox gbMisc;
         private System.Windows.Forms.ColorDialog setColour;
         private System.Windows.Forms.CheckBox cbJetpack;
         private System.Windows.Forms.CheckBox cbStronk;
@@ -251,8 +327,13 @@
         private System.Windows.Forms.Label curCords;
         private System.Windows.Forms.Label lblphealthspeed;
         private System.Windows.Forms.NumericUpDown nudHealthSpeed;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox gbReapply;
         private System.Windows.Forms.Button btnReapply;
+        private System.Windows.Forms.GroupBox gbSpeed;
+        private System.Windows.Forms.GroupBox gbStep;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown nudStepHeight;
+        private System.Windows.Forms.CheckBox cbStepPatch;
     }
 }
 
