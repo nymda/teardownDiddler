@@ -24,7 +24,13 @@ namespace TeardownMemoryModder.Mods
         public void patchStep()
         {
             byte[] nop = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA5E78, nop, nop.Length, ref discardRef); //patch instructions for step
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6108, nop, nop.Length, ref discardRef); //patch instructions for step
+        }
+
+        public void unPatchStep()
+        {
+            byte[] inst = new byte[] { 0xF3, 0x0F, 0x11, 0x91, 0xF8, 0x00, 0x00, 0x00 };
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6108, inst, inst.Length, ref discardRef); //unpatch instructions for step
         }
 
         public void setStepHeight(int step)

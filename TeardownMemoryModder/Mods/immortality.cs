@@ -27,12 +27,17 @@ namespace TeardownMemoryModder.Mods
             byte[] nop = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
             WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6182, nop, nop.Length, ref discardRef); //patch instructions for speedhack
             WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8CF3, nop, nop.Length, ref discardRef); //patch instrustions for immortality
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA7FB7, nop, nop.Length, ref discardRef); //patch instrustions for fall immortality
         }
 
         public void unPatchImmortality()
         {
-            byte[] func = new byte[] { 0xF3, 0x0F, 0x11, 0x91, 0x5C, 0x01, 0x00, 0x00 };
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8A63, func, func.Length, ref discardRef);
+            byte[] speedFunc = new byte[] { 0xF3, 0x0F, 0x11, 0x81, 0x5C, 0x01, 0x00, 0x00 };
+            byte[] priImFunc = new byte[] { 0xF3, 0x0F, 0x11, 0x91, 0x5C, 0x01, 0x00, 0x00 };
+            byte[] secImFunc = new byte[] { 0xF3, 0x0F, 0x11, 0x86, 0x5C, 0x01, 0x00, 0x00 };
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6182, speedFunc, speedFunc.Length, ref discardRef); //unpatch instrustions for speed
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8CF3, priImFunc, priImFunc.Length, ref discardRef); //unpatch instrustions for immortality
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA7FB7, secImFunc, secImFunc.Length, ref discardRef); //unpatch instrustions for other immortality
         }
 
         public void setCurrentHealth(float health)

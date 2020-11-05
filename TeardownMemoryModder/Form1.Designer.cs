@@ -225,7 +225,7 @@
             this.gbSpeed.Size = new System.Drawing.Size(322, 42);
             this.gbSpeed.TabIndex = 6;
             this.gbSpeed.TabStop = false;
-            this.gbSpeed.Text = "Speed (Requires immortality patch)";
+            this.gbSpeed.Text = "Speed (Requires immortality)";
             // 
             // gbStep
             // 

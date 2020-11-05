@@ -270,7 +270,7 @@ namespace TeardownMemoryModder
             }
             else
             {
-                //unpatch step
+                step.unPatchStep();
                 nudStepHeight.Enabled = false;
             }
         }
