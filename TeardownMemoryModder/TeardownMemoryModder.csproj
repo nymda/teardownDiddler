@@ -55,9 +55,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Mods\fly.cs" />
     <Compile Include="Mods\immortality.cs" />
     <Compile Include="Mods\jetpack.cs" />
     <Compile Include="Mods\removeBoundaries.cs" />
+    <Compile Include="Mods\speed.cs" />
     <Compile Include="Mods\step.cs" />
     <Compile Include="Mods\teleport.cs" />
     <Compile Include="offsetPackage.cs" />

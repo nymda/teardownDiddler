@@ -25,9 +25,16 @@ namespace TeardownMemoryModder.Mods
         public void patchImmortality()
         {
             byte[] nop = new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6182, nop, nop.Length, ref discardRef); //patch instructions for speedhack
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8CF3, nop, nop.Length, ref discardRef); //patch instrustions for immortality
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA7FB7, nop, nop.Length, ref discardRef); //patch instrustions for fall immortality
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6182, nop, nop.Length, ref discardRef); //nop instruction 1
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8CF3, nop, nop.Length, ref discardRef); //patch instrustions for basic damage
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA7FB7, nop, nop.Length, ref discardRef); //patch instrustions for fall damage
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA9E95, nop, nop.Length, ref discardRef); //patch instrustions for fire damage
+        }
+
+        public void patchSpeed()
+        {
+            byte[] newSpeedInst = new byte[] { 0xF3, 0x0F, 0x10, 0x81, 0x60, 0x01, 0x00, 0x00 };
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA618a, newSpeedInst, newSpeedInst.Length, ref discardRef); //patch instruction 2
         }
 
         public void unPatchImmortality()
@@ -35,15 +42,29 @@ namespace TeardownMemoryModder.Mods
             byte[] speedFunc = new byte[] { 0xF3, 0x0F, 0x11, 0x81, 0x5C, 0x01, 0x00, 0x00 };
             byte[] priImFunc = new byte[] { 0xF3, 0x0F, 0x11, 0x91, 0x5C, 0x01, 0x00, 0x00 };
             byte[] secImFunc = new byte[] { 0xF3, 0x0F, 0x11, 0x86, 0x5C, 0x01, 0x00, 0x00 };
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6182, speedFunc, speedFunc.Length, ref discardRef); //unpatch instrustions for speed
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8CF3, priImFunc, priImFunc.Length, ref discardRef); //unpatch instrustions for immortality
-            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA7FB7, secImFunc, secImFunc.Length, ref discardRef); //unpatch instrustions for other immortality
+            byte[] firImFunc = new byte[] { 0xF3, 0x0F, 0x11, 0x87, 0x5C, 0x01, 0x00, 0x00 };
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA6182, speedFunc, speedFunc.Length, ref discardRef); //re-insert instruction 1
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA8CF3, priImFunc, priImFunc.Length, ref discardRef); //unpatch instrustions for basic damage
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA7FB7, secImFunc, secImFunc.Length, ref discardRef); //unpatch instrustions for fall damage
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA9E95, firImFunc, firImFunc.Length, ref discardRef); //unpatch instrustions for fire immortality
+        }
+
+        public void unpatchSpeed()
+        {
+            byte[] oldSpeedInst = new byte[] { 0xF3, 0x0F, 0x10, 0x81, 0x5C, 0x01, 0x00, 0x00 };
+            WriteProcessMemory(pack.processHandle, pack.process.MainModule.BaseAddress.ToInt64() + 0xA618a, oldSpeedInst, oldSpeedInst.Length, ref discardRef); //unpatch instruction 2
         }
 
         public void setCurrentHealth(float health)
         {
             byte[] stronk = BitConverter.GetBytes(health);
             WriteProcessMemory(pack.processHandle, pack.playerInstance + 0x015C, stronk, stronk.Length, ref discardRef);
+        }
+
+        public void setCurrentSpeed(float speed)
+        {
+            byte[] speedBytes = BitConverter.GetBytes(speed);
+            WriteProcessMemory(pack.processHandle, pack.playerInstance + 0x0160, speedBytes, speedBytes.Length, ref discardRef);
         }
     }
 }

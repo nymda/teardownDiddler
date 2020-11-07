@@ -66,6 +66,9 @@ namespace TeardownMemoryModder
         public jetpack jetpack;
         public immortality immortality;
         public step step;
+        public fly fly;
+
+        public int lastMovementMode = 0;
 
         public string debugText = "";
         public int unusedRef = 0;
@@ -135,13 +138,14 @@ namespace TeardownMemoryModder
                 dbgTxt.AppendText(" Scene instance : 0x" + sceneInstance.ToString("X"));
                 dbgTxt.AppendText(Environment.NewLine);
 
-                Console.WriteLine(playerPtr);
-
                 int read_vcount = 0;
                 ReadProcessMemory(processHandle, sceneInstance + 0x530, origionalWallCode, origionalWallCode.Length, ref read_vcount);
 
                 //create the offsetpackage
                 pack = new offsetPackage(process, handle, playerInstance, gameInstance, processHandle, sceneInstance);
+
+                byte[] defSpeed = BitConverter.GetBytes(1f);
+                WriteProcessMemory(pack.processHandle, pack.playerInstance + 0x0160, defSpeed, defSpeed.Length, ref bytesRead); //put default speed value into unused memory for later
 
                 //initialise mods
                 removeBoundaries = new removeBoundaries(pack);
@@ -149,20 +153,21 @@ namespace TeardownMemoryModder
                 jetpack = new jetpack(pack);
                 immortality = new immortality(pack);
                 step = new step(pack);
+                fly = new fly(pack);
 
                 this.Text = "Teardown diddler [ACTIVE]";
+                tc.Enabled = true;
 
                 updateCurrentPositions.Start();
             }
             else
             {
                 this.Text = "Teardown diddler [INACTIVE]";
-                gbDebug.Enabled = false;
-                gbMisc.Enabled = false;
-                gbPos.Enabled = false;
-                gbReapply.Enabled = false;
             }
         }
+
+        public bool isInFly = false;
+        public bool once = true;
 
         private void updateCurrentPositions_Tick(object sender, EventArgs e)
         {
@@ -175,6 +180,9 @@ namespace TeardownMemoryModder
 
             short keyStateSpace = GetAsyncKeyState(0x20);
             bool isSpacePressed = ((keyStateSpace >> 15) & 0x0001) == 0x0001;
+
+            short keyStateF1 = GetAsyncKeyState(0x70);
+            bool isF1Pressed = ((keyStateF1 >> 15) & 0x0001) == 0x0001;
 
             //read current position
             List<float> TmpPos = teleport.readPositon();
@@ -194,13 +202,44 @@ namespace TeardownMemoryModder
             }
 
             ///use jetpack
-            if (isSpacePressed && cbJetpack.Checked)
+            if (isSpacePressed && rbJetpack.Checked)
             {
                 jetpack.boost();
             }
             else
             {
                 jetpack.first = true;
+            }
+
+            if (isF1Pressed)
+            {
+                if (once)
+                {
+                    if (isInFly)
+                    {
+                        fly.endFly();
+                        if (lastMovementMode == 1)
+                        {
+                            rbJetpack.Checked = true;
+                        }
+                        else
+                        {
+                            rbNoMovementMod.Checked = true;
+                        }
+                        isInFly = false;
+                    }
+                    else
+                    {
+                        rbFlight.Checked = true;
+                        fly.beginFly();
+                        isInFly = true;
+                    }
+                    once = false;
+                }
+            }
+            else
+            {
+                once = true;
             }
         }
 
@@ -233,11 +272,13 @@ namespace TeardownMemoryModder
             if (cbStronk.Checked)
             {
                 immortality.patchImmortality();
+                immortality.patchSpeed();
                 nudHealthSpeed.Enabled = true;
             }
             else
             {
                 immortality.unPatchImmortality();
+                immortality.unpatchSpeed();
                 nudHealthSpeed.Enabled = false;
             }
         }
@@ -245,7 +286,6 @@ namespace TeardownMemoryModder
         private void nudHealthSpeed_ValueChanged(object sender, EventArgs e)
         {
             immortality.setCurrentHealth((float)nudHealthSpeed.Value);
-            Console.WriteLine(nudHealthSpeed.Value);
         }
 
         private void btnReapply_Click(object sender, EventArgs e)
@@ -278,6 +318,52 @@ namespace TeardownMemoryModder
         private void nudStepHeight_ValueChanged(object sender, EventArgs e)
         {
             step.setStepHeight((int)nudStepHeight.Value);
+        }
+
+        private void rbNoMovementMod_CheckedChanged(object sender, EventArgs e)
+        {
+            lastMovementMode = 0;
+            if (fly.inFlightMode)
+            {
+                fly.endFly();
+            }
+        }
+
+        private void rbJetpack_CheckedChanged(object sender, EventArgs e)
+        {
+            lastMovementMode = 1;
+            if (fly.inFlightMode)
+            {
+                fly.endFly();
+            }
+        }
+
+        private void cbSpeed_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbSpeed.Checked)
+            {
+                immortality.patchSpeed();
+                nudSpeed.Enabled = true;
+            }
+            else
+            {
+                if (cbStronk.Checked)
+                {
+                    //dont unpatch, just set to normal speed
+                    immortality.setCurrentSpeed(1);
+                    nudSpeed.Enabled = false;
+                }
+                else
+                {
+                    immortality.unpatchSpeed();
+                    nudSpeed.Enabled = false;
+                }
+            }
+        }
+
+        private void nudSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            immortality.setCurrentSpeed((float)nudSpeed.Value);
         }
     }
 }
