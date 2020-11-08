@@ -67,6 +67,7 @@ namespace TeardownMemoryModder
         public immortality immortality;
         public step step;
         public fly fly;
+        public slowmo slowmo;
 
         public int lastMovementMode = 0;
 
@@ -154,9 +155,11 @@ namespace TeardownMemoryModder
                 immortality = new immortality(pack);
                 step = new step(pack);
                 fly = new fly(pack);
+                slowmo = new slowmo(pack);
 
                 this.Text = "Teardown diddler [ACTIVE]";
                 tc.Enabled = true;
+                gbReapply.Enabled = true;
 
                 updateCurrentPositions.Start();
             }
@@ -167,7 +170,8 @@ namespace TeardownMemoryModder
         }
 
         public bool isInFly = false;
-        public bool once = true;
+        public bool onceFly = true;
+        public bool onceSlm = true;
 
         private void updateCurrentPositions_Tick(object sender, EventArgs e)
         {
@@ -183,6 +187,9 @@ namespace TeardownMemoryModder
 
             short keyStateF1 = GetAsyncKeyState(0x70);
             bool isF1Pressed = ((keyStateF1 >> 15) & 0x0001) == 0x0001;
+
+            short keyStateF2 = GetAsyncKeyState(0x51); //This is `Q`, not F2, however i dont care and cant be bothered to rename it
+            bool isF2Pressed = ((keyStateF2 >> 15) & 0x0001) == 0x0001;
 
             //read current position
             List<float> TmpPos = teleport.readPositon();
@@ -213,7 +220,7 @@ namespace TeardownMemoryModder
 
             if (isF1Pressed)
             {
-                if (once)
+                if (onceFly)
                 {
                     if (isInFly)
                     {
@@ -234,12 +241,25 @@ namespace TeardownMemoryModder
                         fly.beginFly();
                         isInFly = true;
                     }
-                    once = false;
+                    onceFly = false;
                 }
             }
             else
             {
-                once = true;
+                onceFly = true;
+            }
+
+            if (isF2Pressed)
+            {
+                if (onceSlm)
+                {
+                    cbGameSpeed.Checked = !cbGameSpeed.Checked;
+                    onceSlm = false;
+                }
+            }
+            else
+            {
+                onceSlm = true;
             }
         }
 
@@ -364,6 +384,25 @@ namespace TeardownMemoryModder
         private void nudSpeed_ValueChanged(object sender, EventArgs e)
         {
             immortality.setCurrentSpeed((float)nudSpeed.Value);
+        }
+
+        private void cbGameSpeed_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbGameSpeed.Checked)
+            {
+                slowmo.patchGameSpeed();
+                tbGameSpeed.Enabled = true;
+            }
+            else
+            {
+                slowmo.unpatchGameSpeed();
+                tbGameSpeed.Enabled = false;
+            }
+        }
+
+        private void tbGameSpeed_Scroll(object sender, EventArgs e)
+        {
+            slowmo.setGameSpeed(tbGameSpeed.Value);
         }
     }
 }

@@ -64,6 +64,9 @@
             this.tpMisc = new System.Windows.Forms.TabPage();
             this.label5 = new System.Windows.Forms.Label();
             this.tpDebug = new System.Windows.Forms.TabPage();
+            this.tpSlowMo = new System.Windows.Forms.TabPage();
+            this.cbGameSpeed = new System.Windows.Forms.CheckBox();
+            this.tbGameSpeed = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.nudHealthSpeed)).BeginInit();
             this.gbReapply.SuspendLayout();
             this.gbStep.SuspendLayout();
@@ -79,6 +82,8 @@
             this.tpMovement.SuspendLayout();
             this.tpMisc.SuspendLayout();
             this.tpDebug.SuspendLayout();
+            this.tpSlowMo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbGameSpeed)).BeginInit();
             this.SuspendLayout();
             // 
             // savedCords
@@ -172,6 +177,7 @@
             // gbReapply
             // 
             this.gbReapply.Controls.Add(this.btnReapply);
+            this.gbReapply.Enabled = false;
             this.gbReapply.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbReapply.Location = new System.Drawing.Point(12, 203);
             this.gbReapply.Name = "gbReapply";
@@ -258,6 +264,7 @@
             this.tc.Controls.Add(this.tpImmortal);
             this.tc.Controls.Add(this.tpSpeed);
             this.tc.Controls.Add(this.tpMovement);
+            this.tc.Controls.Add(this.tpSlowMo);
             this.tc.Controls.Add(this.tpMisc);
             this.tc.Controls.Add(this.tpDebug);
             this.tc.Enabled = false;
@@ -465,6 +472,39 @@
             this.tpDebug.Text = "Debug";
             this.tpDebug.UseVisualStyleBackColor = true;
             // 
+            // tpSlowMo
+            // 
+            this.tpSlowMo.Controls.Add(this.tbGameSpeed);
+            this.tpSlowMo.Controls.Add(this.cbGameSpeed);
+            this.tpSlowMo.Location = new System.Drawing.Point(4, 21);
+            this.tpSlowMo.Name = "tpSlowMo";
+            this.tpSlowMo.Size = new System.Drawing.Size(493, 160);
+            this.tpSlowMo.TabIndex = 6;
+            this.tpSlowMo.Text = "Slow motion";
+            this.tpSlowMo.UseVisualStyleBackColor = true;
+            // 
+            // cbGameSpeed
+            // 
+            this.cbGameSpeed.AutoSize = true;
+            this.cbGameSpeed.Location = new System.Drawing.Point(5, 4);
+            this.cbGameSpeed.Name = "cbGameSpeed";
+            this.cbGameSpeed.Size = new System.Drawing.Size(101, 15);
+            this.cbGameSpeed.TabIndex = 4;
+            this.cbGameSpeed.Text = "Slow motion";
+            this.cbGameSpeed.UseVisualStyleBackColor = true;
+            this.cbGameSpeed.CheckedChanged += new System.EventHandler(this.cbGameSpeed_CheckedChanged);
+            // 
+            // tbGameSpeed
+            // 
+            this.tbGameSpeed.Location = new System.Drawing.Point(5, 25);
+            this.tbGameSpeed.Maximum = 100;
+            this.tbGameSpeed.Minimum = 4;
+            this.tbGameSpeed.Name = "tbGameSpeed";
+            this.tbGameSpeed.Size = new System.Drawing.Size(482, 45);
+            this.tbGameSpeed.TabIndex = 10;
+            this.tbGameSpeed.Value = 4;
+            this.tbGameSpeed.Scroll += new System.EventHandler(this.tbGameSpeed_Scroll);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 11F);
@@ -501,6 +541,9 @@
             this.tpMisc.PerformLayout();
             this.tpDebug.ResumeLayout(false);
             this.tpDebug.PerformLayout();
+            this.tpSlowMo.ResumeLayout(false);
+            this.tpSlowMo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbGameSpeed)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -541,6 +584,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown nudSpeed;
         private System.Windows.Forms.CheckBox cbSpeed;
+        private System.Windows.Forms.TabPage tpSlowMo;
+        private System.Windows.Forms.TrackBar tbGameSpeed;
+        private System.Windows.Forms.CheckBox cbGameSpeed;
     }
 }
 
